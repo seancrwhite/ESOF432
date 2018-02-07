@@ -1,0 +1,61 @@
+--This is a USE model of the first design of a movie rental system
+
+model MovieRental
+enum PriceCode {regular, family, newRelease}
+
+class Customer
+attributes
+	name:String
+operations
+	addRental()
+	getName()
+	Statement()
+		begin
+			declare m:Movie;
+			for ren in self.rentals do
+				ren.getDaysRented();
+				m := ren.getMovie();
+				m.getPriceCode();
+				m.getTitle();
+			end
+		end
+end
+
+class Rental
+attributes
+	daysRented:Integer
+operations
+	getDaysRented()
+		begin
+		end
+	getMovie(): Movie
+		begin
+			result := self.movie
+		end
+end
+
+class Movie
+attributes
+	title:String
+	priceCode:Integer
+operations
+	getPriceCode()
+		begin
+		end
+	setPriceCode()
+		begin
+		end
+	getTitle()
+		begin
+		end
+end
+
+association custRentals between
+	Customer[1] role renter
+	Rental[0..*] role rentals
+end
+
+association movRental between
+	Rental[0..*] role movRentals
+	Movie[1] role movie
+end

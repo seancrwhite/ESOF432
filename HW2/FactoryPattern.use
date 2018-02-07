@@ -1,0 +1,59 @@
+-- This is a USE model that describes a generic factory pattern
+-- Sean White & Rostik Mertz
+
+model FactoryPattern
+
+-- Classes
+
+class ObjectFactory
+attributes
+
+operations
+  getObject()
+    begin
+      declare instance:AbstractObject, result:AbstractObject;
+
+      result := instance;
+    end
+end
+
+class AbstractObject
+attributes
+  num:Integer
+
+operations
+  addNum()
+end
+
+class Object1 < AbstractObject
+attributes
+
+operations
+  addNum()
+    begin
+      self.num := self.num + 1;
+    end
+end
+
+class Object2 < AbstractObject
+attributes
+
+operations
+  addNum()
+    begin
+      self.num := self.num + 2;
+    end
+end
+
+-- Associations
+
+association creates between
+  AbstractObject [0..*] role instance
+  ObjectFactory [1] role factory
+end
+
+-- Constraints
+constraints
+
+context AbstractObject
+  inv NumMustBePositive:num >= 0

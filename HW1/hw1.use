@@ -1,0 +1,39 @@
+--This is a USE model of the first design of a movie rental system
+model MovieRental
+
+class Customer
+attributes
+	name:String
+operations
+	addRental()
+	getName()
+	Statement()
+end
+
+class Rental
+attributes
+	daysRented:Integer
+operations
+	getDaysRented()
+	getMovie()
+end
+
+class Movie
+attributes
+	title:String
+	priceCode:Integer
+operations
+	getPriceCode()
+	setPriceCode()
+	getTitle()
+end
+
+association custRentals between
+	Customer[1] role renter
+	Rental[0..*] role rentals
+end
+
+association movRental between
+	Rental[0..*] role movRentals
+	Movie[1] role movie
+end
