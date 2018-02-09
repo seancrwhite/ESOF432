@@ -1,0 +1,6 @@
+USE version 5.0.0-496, Copyright (C) 1999-2018 University of Bremen
+java.lang.UnsatisfiedLinkError: no natGNUReadline in java.library.path
+Apparently, the GNU readline library is not available on your system.
+The program will continue using a simple readline implementation.
+You can turn off this warning message by using the switch -nr
+use> 
