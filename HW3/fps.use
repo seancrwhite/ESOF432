@@ -1,0 +1,190 @@
+-- USE spec of an FPS game
+-- Sean White & Rostik Mertz
+
+model FPS
+
+--classes
+
+class Map
+attributes
+    players:PlayerCharacter
+    weapons:Weapon
+    currState:IPlayerState
+operations
+end
+
+class Weapon
+attributes
+    ammo:Integer
+    damage:Integer
+    maxAmmo:Integer
+    owner:PlayerCharacter
+    currState:IWeaponState
+operations
+    fire()
+    begin
+        self.currState.fire(self);
+    end
+    reload()
+    begin
+        self.ammo:=self.maxAmmo;
+    end
+statemachines
+    psm firing
+    states
+        Start:initial
+        HasAmmo [ammo > 0]
+        NoAmmo [ammo = 0]
+    transitions
+        Start -> HasAmmo
+        HasAmmo -> NoAmmo {fire() [ammo = 0]}
+        NoAmmo -> HasAmmo {reload()}
+    end
+end
+
+class PlayerCharacter
+attributes
+    health:Integer
+    currWeapon:Weapon
+    inventory:Weapon
+    defeatable:Boolean
+    currState:IPlayerState
+    opponentSeen:Boolean
+    opponentDefeatable:Boolean
+operations
+    changeWeapon(w:Weapon)
+    move()
+    begin
+        self.currState.move();
+    end
+    onSeeOpponent(enemy:PlayerCharacter)
+    begin
+        self.opponentDefeatable:=enemy.defeatable;
+        self.opponentSeen:=true;
+    end
+    onLoseOpponent()
+    begin
+        self.opponentDefeatable:=true;
+        self.opponentSeen:=false;
+    end
+    fire()
+    begin
+        self.currWeapon.fire();
+    end
+    pray()
+statemachines
+    psm combat
+    states
+        Start:initial
+        Neutral [opponentSeen = false]
+        Attack  [opponentSeen = true and opponentDefeatable = true]
+        Panic   [opponentSeen = true and opponentDefeatable = false]
+        Die     [health <= 0]
+    transitions
+        Start -> Neutral
+        Neutral -> Attack {onSeeOpponent() [opponentDefeatable = true]}
+        Attack -> Neutral {onLoseOpponent()}
+        Neutral -> Panic {onSeeOpponent() [opponentDefeatable = false]}
+        Panic -> Neutral {onLoseOpponent()}
+        Attack -> Die {[health <= 0] pray()}
+        Panic -> Die {[health <= 0] pray()}
+    end
+end
+
+class IPlayerState
+attributes
+operations
+    move()
+    begin
+    end
+end
+
+class Neutral < IPlayerState
+attributes
+operations
+    move()
+    begin
+    end
+end
+
+class Attack < IPlayerState
+attributes
+operations
+    move()
+    begin
+    end
+end
+
+class Panic < IPlayerState
+attributes
+operations
+    move()
+    begin
+    end
+end
+
+class Die < IPlayerState
+attributes
+operations
+    move()
+    begin
+    end
+end
+
+class IWeaponState
+attributes
+operations
+    fire(w:Weapon)
+    begin
+    end
+end
+
+class HasAmmo < IWeaponState
+attributes
+operations
+    fire(w:Weapon)
+    begin
+        declare result:Boolean;
+        w.ammo:=w.ammo-1;
+        if w.ammo=0
+        then result:=true
+        else result:=false
+        end
+    end
+end
+
+class NoAmmo < IWeaponState
+attributes
+operations
+    fire(w:Weapon)
+    begin
+        w.reload();
+    end
+end
+
+-- Associations
+
+association hosts between
+  Map [1] role currMap
+  PlayerCharacter [0..*] role players
+end
+
+association contains between
+  Map [1] role currMap
+  Weapon [0..*] role weapons
+end
+
+association hasInInventory between
+  PlayerCharacter [1] role owner
+  Weapon [0..*] role weapons
+end
+
+association inPState between
+  PlayerCharacter [0] role player
+  IPlayerState [1] role currState
+end
+
+association inWState between
+  Weapon [0] role weapon
+  IWeaponState [1] role currState
+end
