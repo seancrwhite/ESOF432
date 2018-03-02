@@ -1,0 +1,33 @@
+-- USE spec of Fast TaxHandler
+-- Sean White & Rostik Mertz
+
+model Fast
+
+--classes
+
+class FastTax
+
+end
+
+class UserInterface
+
+end
+
+class IRS
+
+end
+
+
+
+
+
+association port1 between
+  FastTax [1] role verifier
+  UserInterface [1..*] role user
+end
+
+association port2 between
+  FastTax [1] role handler
+  IRS [1] role government
+end
+
