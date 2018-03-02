@@ -1,0 +1,86 @@
+-- USE spec of Fast FastTax
+-- Sean White & Rostik Mertz
+
+model FastTax
+
+--classes
+
+class Handler
+attributes
+   super:Handler
+   next:Handler
+operations
+   authenticate(s:String)
+      begin
+         
+      end
+   recieve()
+   send(s:String)
+end
+
+class IRSHandler < Handler
+attributes
+
+operations
+   authenticate(s:String)
+   begin
+      self.send(s);
+   end
+end
+
+class UserHandler < Handler
+attributes
+
+operations
+   authenticate(s:String)
+   begin
+      self.next(s);
+   end
+end
+
+class UserInterface
+attributes
+
+operations
+   updateStatus()
+   begin
+      declare s:String;
+      s:='taxform';
+      self.sendForm(s);
+   end
+   sendForm(s:String)
+   begin
+      declare u:UserHandler;
+      u.authenticate();
+   end
+end
+
+class IRSInterface
+attributes
+
+operations
+   sendStatus()
+   recieveReport()
+end
+
+association next between
+  IRSHandler [1] role next
+  UserHandler [1] role next
+end
+
+association userUpdate between
+   UserHandler [1] role handler
+   UserInterface [1..*] role UserInterface
+end
+
+association IRSUpdate between
+  IRSInterface [1] role IRSInterface
+  IRSHandler [1] role handler
+end
+
+
+
+
+
+
+
